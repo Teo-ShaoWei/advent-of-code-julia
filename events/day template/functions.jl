@@ -22,7 +22,7 @@ end
 
 function parse_line(line)
     @chain line begin
-        line
+        _
     end
 end
 
@@ -31,7 +31,7 @@ end
 
 function result1(pd)
     @chain pd begin
-        pd
+        _
     end
 end
 
@@ -40,6 +40,6 @@ end
 
 function result2(pd)
     @chain pd begin
-        pd
+        _
     end
 end
