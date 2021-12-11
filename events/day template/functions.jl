@@ -7,8 +7,6 @@ using Mods
 
 ## Helpers
 
-⋆(f::Base.Callable) = Base.splat(f)
-
 CI = CartesianIndex
 CIS = CartesianIndices
 
