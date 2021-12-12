@@ -6,6 +6,8 @@ using Chain
 CI = CartesianIndex
 CIS = CartesianIndices
 
+Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+
 
 ## Parse input
 
