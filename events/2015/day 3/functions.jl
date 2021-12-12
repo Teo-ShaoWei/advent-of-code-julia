@@ -4,6 +4,9 @@ using Chain
 ## Helpers
 
 CI = CartesianIndex
+CIS = CartesianIndices
+
+Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
 
 
 ## Parse input
@@ -18,7 +21,7 @@ end
 
 function parse_line(line)
     @chain line begin
-        split(_, "")
+        split("")
         @. only
     end
 end
@@ -26,12 +29,21 @@ end
 
 ## Part 1
 
-function result1(path)
+function get_move(direction)
+    move = Dict(
+        '^' => CI(-1, 0),
+        '>' => CI(0, 1),
+        'v' => CI(1, 0),
+        '<' => CI(0, -1),
+    )
+    return move[direction]
+end
+
+function result1(directions)
     loc = CI(0, 0)
     seen = Set([loc])
-    for p in path
-        move = MOVE[p]
-        loc += move
+    for d in directions
+        loc += get_move(d)
         push!(seen, loc)
     end
 
@@ -41,17 +53,14 @@ end
 
 ## Part 2
 
-function result2(path)
+function result2(directions)
     locs = [CI(0, 0), CI(0, 0)]
     seen = Set([locs[1]])
-    for p in path
-        move = MOVE[p]
-        locs[1] += move
+    for d in directions
+        locs[1] += get_move(d)
         push!(seen, locs[1])
-        locs = locs[2:-1:1]
+        reverse!(locs)
     end
-
-    println()
 
     return length(seen)
 end

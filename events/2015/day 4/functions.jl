@@ -1,5 +1,13 @@
 using MD5
 
+
+## Helpers
+
+CI = CartesianIndex
+CIS = CartesianIndices
+
+Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+
 ## Part 1
 
 function result1(key)

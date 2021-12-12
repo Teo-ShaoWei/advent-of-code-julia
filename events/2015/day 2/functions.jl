@@ -1,6 +1,14 @@
 using Chain
 
 
+## Helpers
+
+CI = CartesianIndex
+CIS = CartesianIndices
+
+Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+
+
 ## Parse input
 
 function parse_input(filename::String)
@@ -15,7 +23,7 @@ function parse_line(line)
         match(r"(\d+)x(\d+)x(\d+)", _)
         collect
         parse.(Int, _)
-        (l = _[1], w = _[2], h = _[3])
+        (; ((:l, :w, :h) .=> _)...)
     end
 end
 
@@ -23,7 +31,12 @@ end
 ## Part 1
 
 function smallest_side_dims(dims)
-    sort!(collect(dims))[1:2]
+    @chain dims begin
+        collect
+        sort!
+        Iterators.take(2)
+        collect
+    end
 end
 
 function get_wrapping_paper_size(dims)
@@ -43,11 +56,9 @@ end
 
 ## Part 2
 
-volume(dims) = prod(dims)
-
 function get_ribbon_length(dims)
     wrap = 2 * sum(smallest_side_dims(dims))
-    ribbon = volume(dims)
+    ribbon = prod(dims)
     return wrap + ribbon
 end
 

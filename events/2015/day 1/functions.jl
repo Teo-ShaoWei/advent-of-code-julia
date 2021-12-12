@@ -1,6 +1,14 @@
 using Chain
 
 
+## Helpers
+
+CI = CartesianIndex
+CIS = CartesianIndices
+
+Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+
+
 ## Parse input
 
 function parse_input(filename::String)
@@ -21,9 +29,17 @@ end
 
 ## Part 1
 
-function result1(moves)
-    @chain moves begin
-        map(c -> MOVE[c], _)
+function get_move(c)
+    move = Dict(
+        '(' => 1,
+        ')' => -1,
+    )
+    move[c]
+end
+
+function result1(pd)
+    @chain pd begin
+        @. get_move
         sum
     end
 end
@@ -31,9 +47,9 @@ end
 
 ## Part 2
 
-function result2(moves)
-    @chain moves begin
-        map(c -> MOVE[c], _)
+function result2(pd)
+    @chain pd begin
+        @. get_move
         cumsum
         findfirst(<(0), _)
     end
