@@ -57,7 +57,7 @@ end
 
 ## Part 1
 
-function get_bags(group)
+function get_sacks(group)
     mid = length(group) ÷ 2
     Iterators.partition(group, mid)
 end
@@ -71,7 +71,7 @@ end
 
 function result1(pd)
     @chain pd begin
-        @. get_bags
+        @. get_sacks
         @. get_common_elem
         @. get_priority
         sum
