@@ -1,0 +1,21 @@
+$ cd /
+$ ls
+dir a
+1 b.txt
+dir d
+$ cd a
+$ ls
+dir a
+1 b.txt
+$ cd a
+$ ls
+1 b.txt
+$ cd ..
+$ cd ..
+$ cd d
+$ ls
+dir a
+1 b.txt
+$ cd a
+$ ls
+1 b.txt
