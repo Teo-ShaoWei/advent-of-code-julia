@@ -7,6 +7,8 @@ using Mods
 
 ## Helpers
 
+import AdventOfCode: print_area, parse_matrix
+
 CI = CartesianIndex
 CIS = CartesianIndices
 
