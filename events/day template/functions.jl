@@ -7,7 +7,12 @@ using Mods
 
 ## Helpers
 
-import AdventOfCode: print_area, parse_matrix
+import AdventOfCode:
+    AdventOfCode,
+    CI, CIS,
+    make_smallest_boundary
+    parse_matrix,
+    print_area
 
 CI = CartesianIndex
 CIS = CartesianIndices
