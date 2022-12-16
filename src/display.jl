@@ -11,6 +11,14 @@ const DEFAULT_MAP_LEGEND = [
         pred = x -> Int(x) == 1,
         char = '░',
     ),
+    (
+        pred = x -> Int(x) == 2,
+        char = 'x',
+    ),
+    (
+        pred = x -> Int(x) == 3,
+        char = '#',
+    ),
 ]
 
 """
