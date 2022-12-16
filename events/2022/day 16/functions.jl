@@ -180,28 +180,24 @@ end
 
 function build_new_flow_model(valves; time_limit)
     useful_valves = filter_useful_valves(valves)
-    best_flow_lookup = build_best_flow_lookup(build_flow_model(valves; time_limit, useful_valves))
-
-    best_flow = 0
-
-    for (set_i_ids, set_e_ids) in bucket_useful_value_ids(useful_valves)
-        temp_best_i_flow = 0
-        temp_best_e_flow = 0
-
-        for (path_ids, flow) in best_flow_lookup
-            if (path_ids ⊆ set_i_ids)
-                (temp_best_i_flow < flow) && (temp_best_i_flow = flow)
-            end
-
-            if (path_ids ⊆ set_e_ids)
-                (temp_best_e_flow < flow) && (temp_best_e_flow = flow)
-            end
-        end
-
-        temp_best_flow = temp_best_i_flow + temp_best_e_flow
-        (best_flow < temp_best_flow) && (best_flow = temp_best_flow)
+    best_flow_lookup = @chain valves begin
+        build_flow_model(; time_limit, useful_valves)
+        build_best_flow_lookup
+        collect
+        map(x -> NamedTuple((:id, :flow) .=> collect(x)), _)
+        sort!(_; by = x -> x.flow, rev = true)
     end
-    return best_flow
+
+    max_flow = 0
+    for (ids1, flow1) in best_flow_lookup
+        for (ids2, flow2) in best_flow_lookup
+            isempty(ids1 ∩ ids2) || continue
+            flow = flow1 + flow2
+            (flow < max_flow) && break
+            max_flow = flow
+        end
+    end
+    return max_flow
 end
 
 function result2(valves)
