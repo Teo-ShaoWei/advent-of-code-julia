@@ -1,24 +1,4 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
-
-
-## Helpers
-
-import AdventOfCode: print_area, parse_matrix
-
-CI = CartesianIndex
-CIS = CartesianIndices
-
-Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
-Base.show(io::IO, c::CI) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::CIS) = print(io, "CIS((", join(c.indices, ", "), "))")
-Base.show(io::IO, c::CIS) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+import Chain: @chain
 
 
 ## Parse input
@@ -49,7 +29,7 @@ function parse_puzzle_group(s)
     lines = split(s, "\n")
 
     return (;
-        worries = parse.(Int, split(lines[2][19:end], ", ")),
+        worries = eval(Meta.parse("[$(lines[2][19:end])]")),
         op_string = lines[3][14:end],
         check = parse(Int, lines[4][22:end]),
         if_true = parse(Int, lines[5][30:end]),
@@ -74,11 +54,11 @@ end
 
 function transform_monkey_part1(monkey)
     return (;
-    worries = copy(monkey.worries),
-    op = make_op(monkey.op_string),
-    monkey.check,
-    monkey.if_true,
-    monkey.if_false,
+        worries = copy(monkey.worries),
+        op = make_op(monkey.op_string),
+        monkey.check,
+        monkey.if_true,
+        monkey.if_false,
     )
 end
 
@@ -138,11 +118,11 @@ end
 
 function transform_monkey_part2(monkey, big_mod)
     return (;
-    worries = [Mod{big_mod}(w) for w in monkey.worries],
-    op = make_op(monkey.op_string),
-    monkey.check,
-    monkey.if_true,
-    monkey.if_false,
+        worries = [Mod{big_mod}(w) for w in monkey.worries],
+        op = make_op(monkey.op_string),
+        monkey.check,
+        monkey.if_true,
+        monkey.if_false,
     )
 end
 

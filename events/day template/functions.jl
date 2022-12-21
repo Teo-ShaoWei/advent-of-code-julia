@@ -12,7 +12,7 @@ import AdventOfCode:
     CI, CIS,
     make_smallest_boundary,
     parse_matrix,
-    print_area
+    print_matrix
 
 Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
 Base.show(io::IO, c::CI) = show(io, "text/plain", c)

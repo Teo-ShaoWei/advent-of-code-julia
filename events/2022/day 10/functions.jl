@@ -1,22 +1,26 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
+import Chain: @chain
 
 
 ## Helpers
 
-CI = CartesianIndex
-CIS = CartesianIndices
+import AdventOfCode:
+    AdventOfCode,
+    print_matrix, CI, CIS
 
-Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
-Base.show(io::IO, c::CI) = show(io, "text/plain", c)
+function AdventOfCode.CI((; x, y)::@NamedTuple{x::Int, y::Int})
+    return CI(y, x)
+end
 
-Base.show(io::IO, ::MIME"text/plain", c::CIS) = print(io, "CIS((", join(c.indices, ", "), "))")
-Base.show(io::IO, c::CIS) = show(io, "text/plain", c)
+function Base.getproperty(ci::CI{2}, sym::Symbol)
+    (sym == :x) && return ci[2]
+    (sym == :y) && return ci[1]
 
-Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+    # CI has fields (:I,)
+    return getfield(ci, sym)
+end
+
+# Does not conflict with existing defintion for showing CI{N}.
+Base.show(io::IO, ::MIME"text/plain", ci::CI{2}) = print(io, "CI(", (; ci.x, ci.y), ")")
 
 
 ## Types
@@ -99,27 +103,29 @@ function get_sprite(n)
     return n:(n + 2)
 end
 
-function print_area(area)
-    println("size: ", join(size(area), " × "))
-    println("axes: (", join(UnitRange.(axes(area)), ", "), ")")
-    for row in eachrow(area)
-        @chain row begin
-            @. Int
-            replace(1 => '░', 0 => '·')
-            join
-            println
-        end
-    end
-    println()
-end
-
 function result2(ops)
     sprites = get_sprite.(make_values(ops))
-    crt = BitArray(fill(false, (6, 40)))
+    crt = falses(6, 40)
 
     for x in axes(crt, 2), y in axes(crt, 1)
         crt[y, x] = x ∈ sprites[(y - 1) * 40 + x]
     end
 
-    print_area(crt)
+    print_matrix(crt)
+end
+
+function result2(ops)
+    sprites = @chain ops begin
+        make_values
+        _[1:(end - 1)]
+        @. get_sprite
+        reshape((40, :))
+        permutedims((2, 1))
+    end
+
+    crt = falses(6, 40)
+    cix = [ci.x for ci in CIS(crt)]
+
+    crt .= cix .∈ sprites
+    print_matrix(crt)
 end

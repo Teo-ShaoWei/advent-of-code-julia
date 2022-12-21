@@ -1,16 +1,10 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
+import Chain: @chain
+import DataStructures: PriorityQueue, dequeue!
 
 
 ## Helpers
 
-import AdventOfCode: print_area, parse_matrix
-
-CI = CartesianIndex
-CIS = CartesianIndices
+import AdventOfCode: CI, CIS, parse_matrix
 
 Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
 Base.show(io::IO, c::CI) = show(io, "text/plain", c)

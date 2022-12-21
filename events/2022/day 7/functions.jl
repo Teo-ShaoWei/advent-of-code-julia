@@ -1,22 +1,29 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
+import Chain: @chain
+import DataStructures: DefaultDict
 
 
-## Helpers
+# Types
 
-CI = CartesianIndex
-CIS = CartesianIndices
+abstract type Content end
 
-Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
-Base.show(io::IO, c::CI) = show(io, "text/plain", c)
+struct File <: Content
+    name::String
+    size::Int
+end
 
-Base.show(io::IO, ::MIME"text/plain", c::CIS) = print(io, "CIS((", join(c.indices, ", "), "))")
-Base.show(io::IO, c::CIS) = show(io, "text/plain", c)
+struct Folder <: Content
+    name::String
+end
 
-Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+abstract type Op end
+
+struct Cd <: Op
+    dir::String
+end
+
+struct Ls <: Op
+    contents::Vector{Content}
+end
 
 
 ## Parse input
@@ -43,52 +50,67 @@ function parse_puzzle_data(s)
 end
 
 function parse_command(s)
-    @chain s begin
-        split("\n"; keepempty = false)
+    command = split(s, "\n"; keepempty = false)
+    return if command[1] == "ls"
+        Ls(parse_content.(command[2:end]))
+    else
+        Cd(split(command[1], " ")[2])
+    end
+end
+
+function parse_content(s)
+    content = split(s, " ")
+    return if content[1] == "dir"
+        Folder(content[2])
+    else
+        File(content[2], parse(Int, content[1]))
     end
 end
 
 
 ## Part 1
 
-function add_file_size!(sizes, current_dir, v)
-    for i in 0:length(current_dir)
-        dir = current_dir[1:i]
-        sizes[dir] += v
+function calculate_folders_file_size(ops::Vector{Op})
+    folders_file_size = Dict{String, Int}()
+    current_dir = String[]
+    for op in ops
+        exec!(op; folders_file_size, current_dir)
     end
+    return folders_file_size
 end
 
-function calculate_folder_sizes(pd)
-    sizes = DefaultDict(0)
-    current_dir = []
-    for (command, names...) in pd
-        op = command[1:2]
-        dir = command[4:end]
-        if op == "cd"
-            if dir == "/"
-                empty!(current_dir)
-            elseif dir == ".."
-                pop!(current_dir)
-            else
-                push!(current_dir, dir)
-            end
-        elseif op == "ls"
-            for (n1, _) in split.(names, " ")
-                (n1 == "dir") && continue
-                add_file_size!(sizes, current_dir, parse(Int, n1))
-            end
+function exec!(op::Cd; folders_file_size, current_dir::Vector{String})
+    if op.dir == ".."
+        resize!(current_dir, length(current_dir) - 1)
+    elseif op.dir == "/"
+        return
+    else
+        push!(current_dir, op.dir)
+    end
+    return
+end
+
+function exec!(op::Ls; folders_file_size, current_dir::Vector{String})
+    folders_file_size[join(current_dir, "/")] = sum(c.size for c in op.contents if isa(c, File); init = 0)
+end
+
+function calculate_folders_recursive_size(folders_file_size)
+    folders_recursive_size = DefaultDict{String, Int}(0)
+    for parent_path in keys(folders_file_size)
+        for (path, size) in folders_file_size
+            startswith(path, parent_path) || continue
+            folders_recursive_size[parent_path] += size
         end
     end
-    return sizes
+    return folders_recursive_size
 end
 
-function result1(pd)
-    @chain pd begin
-        calculate_folder_sizes
+function result1(ops)
+    @chain ops begin
+        calculate_folders_file_size
+        calculate_folders_recursive_size
         values
-        collect
-        filter(≤(100000), _)
-        # [v for v in _ if v ≤ 100000]
+        [size for size in _ if size ≤ 100000]
         sum
     end
 end
@@ -96,14 +118,13 @@ end
 
 ## Part 2
 
-function result2(pd)
-    sizes = calculate_folder_sizes(pd)
-    space_to_free = sizes[[]] - 40000000
-
-    @chain sizes begin
+function result2(ops)
+    @chain ops begin
+        calculate_folders_file_size
+        calculate_folders_recursive_size
+        @aside space_to_free = _[""] - 40000000
         values
-        collect
-        filter(≥(space_to_free), _)
+        [size for size in _ if size ≥ space_to_free]
         sort!
         first
     end

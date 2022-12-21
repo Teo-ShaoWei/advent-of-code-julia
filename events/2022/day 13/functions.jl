@@ -1,24 +1,9 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
+import Chain: @chain
 
 
 ## Helpers
 
-import AdventOfCode: AdventOfCode, print_area, parse_matrix
-
-CI = CartesianIndex
-CIS = CartesianIndices
-
-Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
-Base.show(io::IO, c::CI) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::CIS) = print(io, "CIS((", join(c.indices, ", "), "))")
-Base.show(io::IO, c::CIS) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+Base.show(io::IO, v::Vector) = print(io, "[", join(v, ", "), "]")
 
 
 ## Parse input
@@ -79,8 +64,12 @@ function Base.:(==)(lhs::Vector, rhs::Int)
 end
 
 function result1(pairs)
-    ordered_check = [lhs < rhs for (lhs, rhs) in pairs]
-    sum(prod.(enumerate(ordered_check)))
+    @chain pairs begin
+        [lhs < rhs for (lhs, rhs) in _]
+        enumerate
+        @. prod
+        sum
+    end
 end
 
 
@@ -88,12 +77,12 @@ end
 
 function result2(pairs)
     divider_packets = [[[2]], [[6]]]
-    sorted_packets = @chain pairs begin
+    @chain pairs begin
         Iterators.flatten
         collect
         append!(divider_packets)
         sort!
+        indexin(divider_packets, _)
+        prod
     end
-
-    prod(indexin(divider_packets, sorted_packets))
 end

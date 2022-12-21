@@ -1,22 +1,4 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
-
-
-## Helpers
-
-CI = CartesianIndex
-CIS = CartesianIndices
-
-Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
-Base.show(io::IO, c::CI) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::CIS) = print(io, "CIS((", join(c.indices, ", "), "))")
-Base.show(io::IO, c::CIS) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+import Chain: @chain
 
 
 ## Parse input

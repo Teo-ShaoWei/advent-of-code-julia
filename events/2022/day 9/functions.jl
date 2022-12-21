@@ -1,22 +1,26 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
+import Chain: @chain
 
 
 ## Helpers
 
-CI = CartesianIndex
-CIS = CartesianIndices
+import AdventOfCode:
+	AdventOfCode,
+	CI, CIS
 
-Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
-Base.show(io::IO, c::CI) = show(io, "text/plain", c)
+function AdventOfCode.CI((; x, y)::@NamedTuple{x::Int, y::Int})
+	return CI(x, y)
+end
 
-Base.show(io::IO, ::MIME"text/plain", c::CIS) = print(io, "CIS((", join(c.indices, ", "), "))")
-Base.show(io::IO, c::CIS) = show(io, "text/plain", c)
+function Base.getproperty(ci::CI{2}, sym::Symbol)
+	(sym == :x) && return ci[1]
+	(sym == :y) && return ci[2]
 
-Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
+	# CI has fields (:I,)
+	return getfield(ci, sym)
+end
+
+# Does not conflict with existing defintion for showing CI{N}.
+Base.show(io::IO, ::MIME"text/plain", ci::CI{2}) = print(io, "CI(", (; ci.x, ci.y), ")")
 
 
 ## Parse input
@@ -45,7 +49,7 @@ end
 function parse_puzzle_line(s)
 	@chain s begin
 		split(" ")
-		(d = Symbol(_[1]), n = parse(Int, _[2]))
+		(d = _[1], n = parse(Int, _[2]))
 	end
 end
 
@@ -54,45 +58,34 @@ end
 
 function next_head(head, d)
 	offsets = Dict(
-		:U => CI(-1, 0),
-		:D => CI(1, 0),
-		:L => CI(0, -1),
-		:R => CI(0, 1),
+		"U" => CI((x =  0, y = -1)),
+		"D" => CI((x =  0, y =  1)),
+		"L" => CI((x = -1, y =  0)),
+		"R" => CI((x =  1, y =  0)),
 	)
 
 	return head + offsets[d]
 end
 
-function is_touching((diff_y, diff_x))
-	return (diff_y ∈ -1:1) && (diff_x ∈ -1:1)
+function is_touching(ci::CI)
+	(ci.x ∈ -1:1) && (ci.y ∈ -1:1)
 end
 
-function move_tail(tail, diff)
-	return tail + CI(sign.(diff))
+function move_tail(tail, δ)
+	return tail + CI((x = sign(δ.x), y = sign(δ.y)))
 end
 
 function next_tail(tail, head)
-	diff = Tuple(head - tail)
-
-	is_touching(diff) && return tail
-	return move_tail(tail, diff)
+	δ = head - tail
+	return is_touching(δ) ? tail : move_tail(tail, δ)
 end
 
-function next(knots, d)
+function next(knots, rule)
 	knots = copy(knots)
-	knots[1] = next_head(knots[1], d)
+	knots[1] = next_head(knots[1], rule)
 
 	for i in 2:length(knots)
 		knots[i] = next_tail(knots[i], knots[i-1])
-	end
-
-	return knots
-end
-
-function next!(visited, knots, d, n)
-	for _ in 1:n
-		knots = next(knots, d)
-		push!(visited, knots[end])
 	end
 
 	return knots
@@ -103,7 +96,10 @@ function visit_by_rope_tail(moves, knot_count)
 
 	knots = [CI(0, 0) for _ in 1:knot_count]
 	for (d, n) in moves
-		knots = next!(visited, knots, d, n)
+		for _ in 1:n
+			knots = next(knots, d)
+			push!(visited, knots[end])
+		end
 	end
 
 	return length(visited)

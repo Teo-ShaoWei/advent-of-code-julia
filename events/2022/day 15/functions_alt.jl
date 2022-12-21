@@ -1,17 +1,14 @@
 # This implementation is idea from Daniel González on Julia Zulip AoC discussion [here](https://julialang.zulipchat.com/#narrow/stream/357313-advent-of-code-.282022.29/topic/day.2015/near/316151594).
 
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
+import Chain: @chain
+import Combinatorics
 
 
 ## Helpers
 
 import AdventOfCode:
     AdventOfCode,
-    CI, CIS, print_area, parse_matrix
+    CI, CIS, print_matrix, parse_matrix
 
 function AdventOfCode.CI((; x, y)::@NamedTuple{x::Int, y::Int})
     return CI(y, x)

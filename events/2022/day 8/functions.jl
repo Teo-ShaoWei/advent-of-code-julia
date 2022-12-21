@@ -1,22 +1,15 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
+import Chain: @chain
 
 
 ## Helpers
 
-CI = CartesianIndex
-CIS = CartesianIndices
+import AdventOfCode: CI, CIS, parse_matrix
 
 Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
 Base.show(io::IO, c::CI) = show(io, "text/plain", c)
 
 Base.show(io::IO, ::MIME"text/plain", c::CIS) = print(io, "CIS((", join(c.indices, ", "), "))")
 Base.show(io::IO, c::CIS) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
 
 
 ## Parse input
@@ -37,22 +30,7 @@ end
 
 function parse_puzzle_data(s)
     @chain s begin
-        parse_matrix
-    end
-end
-
-function parse_matrix(s::AbstractString)::Matrix
-    @chain s begin
-        split("\n")
-        @. parse_row
-        cat(_..., dims = 2)
-        permutedims((2, 1))
-    end
-end
-
-function parse_row(s::AbstractString)::Vector
-    @chain s begin
-        split("")
+        parse_matrix(; row_dlm = "\n", elem_dlm = "")
         parse.(Int, _)
     end
 end
@@ -60,44 +38,42 @@ end
 
 ## Part 1
 
-function trees_towards_l(trees, i, j)
-    [trees[i, k] for k in (j - 1):-1:1]
+function count_seeable_trees(trees)
+    can_see_tree.((trees,), CIS(trees))
 end
 
-function trees_towards_r(trees, i, j)
-    [trees[i, k] for k in (j + 1):size(trees, 2)]
+function trees_towards_l(trees, ci::CI)
+    [trees[ci[1], k] for k in (ci[2] - 1):-1:1]
 end
 
-function trees_towards_t(trees, i, j)
-    [trees[k, j] for k in (i - 1):-1:1]
+function trees_towards_r(trees, ci::CI)
+    [trees[ci[1], k] for k in (ci[2] + 1):size(trees, 2)]
 end
 
-function trees_towards_b(trees, i, j)
-    [trees[k, j] for k in (i + 1):size(trees, 1)]
+function trees_towards_t(trees, ci::CI)
+    [trees[k, ci[2]] for k in (ci[1] - 1):-1:1]
 end
 
-function can_see_tree(trees, i, j)
-    all(trees_towards_l(trees, i, j) .< trees[i, j]) && return true
-    all(trees_towards_r(trees, i, j) .< trees[i, j]) && return true
-    all(trees_towards_t(trees, i, j) .< trees[i, j]) && return true
-    all(trees_towards_b(trees, i, j) .< trees[i, j]) && return true
+function trees_towards_b(trees, ci::CI)
+    [trees[k, ci[2]] for k in (ci[1] + 1):size(trees, 1)]
+end
+
+function can_see_tree(trees, ci::CI)
+    all(trees_towards_l(trees, ci) .< trees[ci]) && return true
+    all(trees_towards_r(trees, ci) .< trees[ci]) && return true
+    all(trees_towards_t(trees, ci) .< trees[ci]) && return true
+    all(trees_towards_b(trees, ci) .< trees[ci]) && return true
     return false
 end
 
-function seeable_trees(trees)
-    seen = Set{CI}()
-
-    for I in CIS(trees)
-        (i, j) = Tuple(I)
-        can_see_tree(trees, i, j) && push!(seen, I)
-    end
-    return seen
+function derive_seeable_trees(trees)
+    can_see_tree.((trees,), CIS(trees))
 end
 
 function result1(trees)
     @chain trees begin
-        seeable_trees
-        length
+        derive_seeable_trees
+        count
     end
 end
 
@@ -105,20 +81,16 @@ end
 ## Part 2
 
 function scenic_view(tree, line)
-    for (k, t) in Iterators.enumerate(line)
-        if t ≥ tree
-            return k
-        end
-    end
-    return length(line)
+    tree_count = findfirst(t -> t ≥ tree, line)
+    isnothing(tree_count) ? length(line) : tree_count
 end
 
-function scenic_view(trees, i, j)
+function scenic_view(trees, ci::CI)
     return (
-        l_view = scenic_view(trees[i, j], trees_towards_l(trees, i, j)),
-        r_view = scenic_view(trees[i, j], trees_towards_r(trees, i, j)),
-        t_view = scenic_view(trees[i, j], trees_towards_t(trees, i, j)),
-        b_view = scenic_view(trees[i, j], trees_towards_b(trees, i, j)),
+        l_view = scenic_view(trees[ci], trees_towards_l(trees, ci)),
+        r_view = scenic_view(trees[ci], trees_towards_r(trees, ci)),
+        t_view = scenic_view(trees[ci], trees_towards_t(trees, ci)),
+        b_view = scenic_view(trees[ci], trees_towards_b(trees, ci)),
     )
 end
 
@@ -127,10 +99,7 @@ function scenic_score(view)
 end
 
 function result2(trees)
-    @chain trees begin
-        CIS
-        @. Tuple
-        Iterators.map(I -> scenic_view(trees, I...), _)
+    @chain scenic_view.((trees,), CIS(trees)) begin
         @. scenic_score
         maximum
     end

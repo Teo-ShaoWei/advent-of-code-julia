@@ -1,9 +1,5 @@
-using Chain
-using Combinatorics
-using DataStructures
-using OffsetArrays
-using Mods
-
+import Chain: @chain
+import OffsetArrays: OffsetArray, OffsetMatrix
 
 ## Helpers
 
@@ -11,16 +7,15 @@ import AdventOfCode:
     AdventOfCode,
     CI, CIS,
     make_smallest_boundary,
-    print_area,
-    parse_matrix
+    print_matrix
 
 function AdventOfCode.CI((; x, y)::@NamedTuple{x::Int, y::Int})
-    return CI(y, x)
+    return CI(x, y)
 end
 
 function Base.getproperty(ci::CI{2}, sym::Symbol)
-    (sym == :x) && return ci[2]
-    (sym == :y) && return ci[1]
+    (sym == :x) && return ci[1]
+    (sym == :y) && return ci[2]
 
     # CI has fields (:I,)
     return getfield(ci, sym)
@@ -82,107 +77,111 @@ end
 
 ## Part 1
 
-# state convention:
+# area convention:
 # 0 - empty
 # 1 - rock
 # 2 - sand
 
-function print_state(state::OffsetArray{Int})
-    print_area(
-        permutedims(state, (2, 1)),
+function print_state((; area, starting_ci))
+    println("starting_ci: ", starting_ci)
+    println()
+    print_matrix(
+        permutedims(area, (2, 1)),
     )
 end
 
-function init_state(paths, starting_ci)
-    (yrange, xrange) = @chain paths begin
+function init_state(paths; margin = (0, 0))
+    starting_ci = CI((x = 500, y = 0))
+
+    (xrange, yrange) = @chain paths begin
         Iterators.flatten
         collect
-        make_smallest_boundary
+        make_smallest_boundary(; margin)
     end
 
-    # because sand falls in a traingle shape.
+    # because sand falls in a traingle shape from (x = 500, y = 0).
+    # as depth is yrange[end], the lower corners CIs are as follows:
 
     lower_left_corner = CI((
-        x = last(xrange),
-        y = min(first(yrange), 500 - last(xrange)),
+        x = min(xrange[begin], 500 - yrange[end]),
+        y = yrange[end],
     ))
 
     lower_right_corner = CI((
-        x = last(xrange),
-        y = max(last(yrange), 500 + last(xrange)),
+        x = max(xrange[end], 500 + yrange[end]),
+        y = yrange[end],
     ))
 
-    @chain begin
+    area = @chain begin
         make_smallest_boundary([starting_ci, lower_left_corner, lower_right_corner])
         zeros(Int, _)
         block_rocks_with_paths!(paths)
     end
+
+    return (; area, starting_ci)
 end
 
-function block_rocks_with_paths!(state::OffsetMatrix{Int}, paths::Vector{Vector{CI{2}}})
+function block_rocks_with_paths!(area::OffsetMatrix{Int}, paths::Vector{Vector{CI{2}}})
     for path in paths
         for k in 2:length(path)
             for ci in CIS(make_smallest_boundary([path[k - 1], path[k]]))
-                block_rock!(state, ci)
+                block_rock!(area, ci)
             end
         end
     end
 
-    return state
+    return area
 end
 
-function block_rock!(state::OffsetMatrix{Int}, ci::CI{2})
-    state[ci] = 1
+function block_rock!(area::OffsetMatrix{Int}, ci::CI{2})
+    area[ci] = 1
 end
 
-function block_sand!(state::OffsetMatrix{Int}, ci::CI{2})
-    state[ci] = 2
+function block_sand!(area::OffsetMatrix{Int}, ci::CI{2})
+    area[ci] = 2
 end
 
-function count_sand(state)
-    count(==(2), state)
+function is_blocked(area::OffsetArray{Int}, ci::CI{2})
+    return area[ci] != 0
 end
 
-function is_blocked(state::OffsetArray{Int}, ci::CI{2})
-    return state[ci] != 0
+function count_sand(area)
+    count(==(2), area)
 end
 
-function next_sand(state::OffsetArray{Int}, starting_ci)::CI{2}
+function next_sand((; area, starting_ci))::CI{2}
     ci = starting_ci
-
-    while true
-        ci.x == lastindex(state, 2) && return ci
-
-        next_ci = ci + CI((x = 1, y = 0))
-        if !is_blocked(state, next_ci)
+    while ci.y != lastindex(area, 2)
+        next_ci = ci + CI((x = 0, y = 1))
+        if !is_blocked(area, next_ci)
             ci = next_ci
             continue
         end
 
-        next_ci = ci + CI((x = 1, y = -1))
-        if !is_blocked(state, next_ci)
+        next_ci = ci + CI((x = -1, y = 1))
+        if !is_blocked(area, next_ci)
             ci = next_ci
             continue
         end
 
         next_ci = ci + CI((x = 1, y = 1))
-        if !is_blocked(state, next_ci)
+        if !is_blocked(area, next_ci)
             ci = next_ci
             continue
         end
 
-        return ci
+        break
     end
+    return ci
 end
 
 function fill_sand_part1(paths)
-    starting_ci = CI((x = 0, y = 500))
-    state = init_state(paths, starting_ci)
+    state = init_state(paths)
 
     for c in Iterators.countfrom(1)
-        ci = next_sand(state, starting_ci)
-        ci.x == lastindex(state, 2) && break
-        block_sand!(state, ci)
+        ci = next_sand(state)
+        ci.y == lastindex(state.area, 2) && break
+        block_sand!(state.area, ci)
 
         # (c > 10) && (println("manual break!"); println(); break)
     end
@@ -191,42 +190,22 @@ function fill_sand_part1(paths)
 end
 
 function result1(paths)
-    state = fill_sand_part1(paths)
-    return count_sand(state)
+    @chain paths begin
+        fill_sand_part1
+        count_sand(_.area)
+    end
 end
 
 
 ## Part 2
 
-function add_floor(state)
-    new_state = zeros(
-        Int,
-        range(
-            start = firstindex(state, 1) - 1,
-            stop = lastindex(state, 1) + 1,
-        ),
-        range(
-            start = firstindex(state, 2),
-            stop = lastindex(state, 2) + 1,
-        ),
-    )
-    new_state[CIS(state)] = state
-
-    return new_state
-end
-
 function fill_sand_part2(paths)
-    starting_ci = CI((x = 0, y = 500))
-
-    state = @chain paths begin
-        init_state(starting_ci)
-        add_floor
-    end
+    state = init_state(paths; margin = (1, 1))
 
     for c in Iterators.countfrom(1)
-        ci = next_sand(state, starting_ci)
-        is_blocked(state, starting_ci) && break
-        block_sand!(state, ci)
+        ci = next_sand(state)
+        is_blocked(state.area, state.starting_ci) && break
+        block_sand!(state.area, ci)
 
         # (c > 10) && (println("manual break!"); println(); break)
     end
@@ -235,6 +214,8 @@ function fill_sand_part2(paths)
 end
 
 function result2(paths)
-    state = fill_sand_part2(paths)
-    return count_sand(state)
+    @chain paths begin
+        fill_sand_part2
+        count_sand(_.area)
+    end
 end
