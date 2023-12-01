@@ -51,7 +51,7 @@ end
 
 function parse_puzzle_line(s)
     @chain s begin
-        _
+        string
     end
 end
 
