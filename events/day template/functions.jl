@@ -10,20 +10,10 @@ using Mods
 import AdventOfCode:
     AdventOfCode,
     CI, CIS,
+    get_bound,
     make_smallest_boundary,
     parse_matrix,
     print_matrix
-
-Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
-Base.show(io::IO, c::CI) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::CIS) = print(io, "CIS((", join(c.indices, ", "), "))")
-Base.show(io::IO, c::CIS) = show(io, "text/plain", c)
-
-Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
-
-# Base.show(io::IO, ::MIME"text/plain", v::Vector) = print(io, "[", join(v, ", "), "]")
-Base.show(io::IO, v::Vector) = print(io, "[", join(v, ", "), "]")
 
 
 ## Parse input
