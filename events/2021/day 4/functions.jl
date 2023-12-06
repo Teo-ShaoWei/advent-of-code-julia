@@ -11,16 +11,29 @@ Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
 
 ## Parse input
 
-function parse_input(filename::String)
+function parse_puzzle_file(filename::String)
     @chain filename begin
         readchomp
+        parse_puzzle_data
+    end
+end
+
+macro pd_str(s::String)
+    @chain s begin
+        chomp
+        parse_puzzle_data
+    end
+end
+
+function parse_puzzle_data(s)
+    @chain s begin
         split("\n\n")
         (drawns = parse_drawns(_[1]), boards = parse_board.(_[2:end]))
     end
 end
 
-function parse_drawns(line)
-    @chain line begin
+function parse_drawns(s)
+    @chain s begin
         split(',')
         parse.(Int, _)
     end
@@ -46,7 +59,7 @@ end
 ## Part 1
 
 function init_drawn_state(board)
-    BitArray(map(_ -> false, board))
+    falses(size(board))
 end
 
 function is_row_complete(state)
@@ -95,7 +108,6 @@ end
 ## Part 2
 
 function result2((; drawns, boards))
-    boards = deepcopy(boards)
     states = init_drawn_state.(boards)
     for d in drawns
         update_drawn!.(states, boards, d)

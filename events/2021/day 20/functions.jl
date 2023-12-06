@@ -55,7 +55,20 @@ end
 
 ## Part 1
 
-# valid_coor(c::CI, area) = all(Tuple(c) .∈ axes(area))
+function print_area(area)
+    println("size: ", join(size(area), " × "))
+    println("axes: (", join(UnitRange.(axes(area)), ", "), ")")
+    for row in eachrow(area)
+        @chain row begin
+            @. Int
+            replace(1 => '█', 0 => '·')
+            join
+            println
+        end
+    end
+    println()
+end
+
 
 function get_neighbours(c::CI)
     # 2D box include center
@@ -73,7 +86,6 @@ function get_neighbours(c::CI)
 
     neighbours = Ref(c) .+ offsets
     return neighbours
-    # return filter(c -> valid_coor(c, area), neighbours)
 end
 
 function get_enhanced_pixels(c::CI, image, algo)
@@ -94,7 +106,8 @@ function get_expanded_range(r, i)
     )
 end
 
-function expand_image(image, is_flipped::Bool)
+function expand_image(image, algo, iteration)
+    is_flipped = (algo[1] == 1) && (iteration % 2 == 0)
     vec_func = is_flipped ? ones : zeros
     result = vec_func(
         Int,
@@ -112,8 +125,7 @@ function expand_image(image, is_flipped::Bool)
 end
 
 function enhance_image(image, algo, iteration)
-    is_flipped = (algo[1] == 1) && (iteration % 2 == 0)
-    expanded_image = expand_image(image, is_flipped)
+    expanded_image = expand_image(image, algo, iteration)
 
     result = zeros(
         Int,

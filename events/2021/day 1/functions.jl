@@ -11,9 +11,23 @@ Base.show(io::IO, ::MIME"text/plain", c::Char) = print(io, string(c))
 
 ## Parse input
 
-function parse_input(filename::String)
+function parse_puzzle_file(filename::String)
     @chain filename begin
-        readlines
+        readchomp
+        parse_puzzle_data
+    end
+end
+
+macro pd_str(s::String)
+    @chain s begin
+        chomp
+        parse_puzzle_data
+    end
+end
+
+function parse_puzzle_data(s)
+    @chain s begin
+        split("\n")
         parse.(Int, _)
     end
 end

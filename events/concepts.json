@@ -1,0 +1,77 @@
+[
+  {
+    "year 2015": [
+      {
+        "day 1": []
+      }
+    ]
+  },
+  {
+    "year 2016" : [
+      {
+        "day 1": []
+      }
+    ]
+  },
+  {
+    "year 2017" : [
+      {
+        "day 1": []
+      }
+    ]
+  },
+  {
+    "year 2018" : [
+      {
+        "day 1": []
+      }
+    ]
+  },
+  {
+    "year 2019" : [
+      {
+        "day 1": []
+      }
+    ]
+  },
+  {
+    "year 2020" : [
+      {
+        "day 1": []
+      }
+    ]
+  },
+  {
+    "year 2021" : [
+      {
+        "day 1": []
+      }
+    ]
+  },
+  {
+    "year 2022" : [
+      {
+        "day 1": []
+      }
+    ]
+  },
+  {
+    "year 2023" : [
+      {
+        "day 1": []
+      },
+      {
+        "day 2": []
+      },
+      {
+        "day 3": [
+          "helper-CIS",
+          "helper-make_smallest_boundary",
+          "helper-parse_matrix",
+          "object-using-named-tuple",
+          "problem-area"
+        ]
+      }
+    ]
+  }
+]
