@@ -1,5 +1,5 @@
 {
-  "julia.executablePath": "mise exec -- julia",
+  "julia.executablePath": "julia",
   "julia.enableRevise": true,
   "julia.environmentPath": "${workspaceFolder}",
   "julia.lint.run": true,
