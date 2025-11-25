@@ -1,0 +1,12 @@
+{
+  "julia.executablePath": "mise exec -- julia",
+  "julia.enableRevise": true,
+  "julia.environmentPath": "${workspaceFolder}",
+  "julia.lint.run": true,
+  "julia.lint.missingrefs": "all",
+  "julia.lint.call": true,
+  "julia.lint.iter": true,
+  "julia.lint.const": true,
+  "julia.lint.lazy": true,
+  "julia.format.enabled": true
+}
