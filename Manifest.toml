@@ -2,7 +2,7 @@
 
 julia_version = "1.12.2"
 manifest_format = "2.0"
-project_hash = "aa2e6031a2987bf2ebc359a0bf06cb9d73505dcc"
+project_hash = "7e1132120751e39d14b76ae1b85f2e18e3690977"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -16,10 +16,16 @@ uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
 version = "0.4.5"
 
 [[deps.AdventOfCode]]
-deps = ["Chain", "CircularList", "Combinatorics", "DataStructures", "HTTP", "MD5", "Markdown", "Mods", "OffsetArrays", "Pluto", "PlutoUI", "TerminalLoggers"]
+deps = ["ArgParse", "Chain", "CircularList", "Combinatorics", "DataStructures", "HTTP", "InteractiveUtils", "MD5", "Markdown", "Mods", "OffsetArrays", "Pluto", "PlutoUI", "TerminalLoggers", "UnPack"]
 path = "."
 uuid = "87127a8b-c330-4da3-bb4c-e7fd23ff40e7"
 version = "0.1.0"
+
+[[deps.ArgParse]]
+deps = ["Logging", "TextWrap"]
+git-tree-sha1 = "22cf435ac22956a7b45b0168abbc871176e7eecc"
+uuid = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+version = "1.2.0"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -539,6 +545,11 @@ deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 version = "1.11.0"
 
+[[deps.TextWrap]]
+git-tree-sha1 = "43044b737fa70bc12f6105061d3da38f881a3e3c"
+uuid = "b718987f-49a8-5099-9789-dcd902bef87d"
+version = "1.0.2"
+
 [[deps.TranscodingStreams]]
 git-tree-sha1 = "0c45878dcfdcfa8480052b6ab162cdd138781742"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
@@ -558,6 +569,11 @@ version = "1.6.1"
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 version = "1.11.0"
+
+[[deps.UnPack]]
+git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
+uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
+version = "1.0.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
