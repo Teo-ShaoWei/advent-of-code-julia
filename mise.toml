@@ -5,4 +5,5 @@ julia = "1.12"
 JULIA_NUM_THREADS = "auto"
 
 [tasks]
+start_pluto = "julia --project scripts/start_pluto.jl"
 download_input = "julia --project scripts/download_input.jl"
