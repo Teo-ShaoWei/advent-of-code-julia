@@ -1,0 +1,5 @@
+[tools]
+julia = "1.12"
+
+[env]
+JULIA_NUM_THREADS = "auto"
