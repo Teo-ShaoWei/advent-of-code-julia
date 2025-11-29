@@ -83,14 +83,6 @@ macro pd_str(s::String)
     end
 end
 
-# ╔═╡ e9fc4134-09f9-43b8-8066-24ab50a2f64c
-# puzzle data samples
-PDS = [
-	# parse_puzzle_file("sample1.txt"),
-	# parse_puzzle_file("sample2.txt"),
-	# parse_puzzle_file("sample3.txt"),
-]
-
 # ╔═╡ d97c6185-39c1-4d26-b2d2-66dd000c317b
 PDI = parse_puzzle_file("input.txt")
 
@@ -102,6 +94,14 @@ md"""
 # ╔═╡ 5d1c1e18-1eb6-4eb0-a23f-df5ef1ca94d4
 PDE_part1 = [
 	# pd"",
+]
+
+# ╔═╡ e9fc4134-09f9-43b8-8066-24ab50a2f64c
+# puzzle part 1 data samples
+PDS_part1 = [
+	# parse_puzzle_file("sample1.txt"),
+	# parse_puzzle_file("sample2.txt"),
+	# parse_puzzle_file("sample3.txt"),
 ]
 
 # ╔═╡ 057c0011-8462-4d8e-b7fa-56e572a7ec97
@@ -118,7 +118,7 @@ end
 [result1(pd) for pd ∈ PDE_part1]
 
 # ╔═╡ 5bdfe21f-9535-47f3-b162-5c63e49022ac
-[result1(pd) for pd ∈ PDS]
+[result1(pd) for pd ∈ PDS_part1]
 
 # ╔═╡ 849a1124-c243-4011-9ae7-1e71c0b5884f
 
@@ -144,6 +144,14 @@ PDE_part2 = [
 	# pd"",
 ]
 
+# ╔═╡ d9048bfa-f5b4-4257-b678-23755c97427e
+# puzzle part 2 data samples
+PDS_part2 = [
+	# parse_puzzle_file("sample1.txt"),
+	# parse_puzzle_file("sample2.txt"),
+	# parse_puzzle_file("sample3.txt"),
+]
+
 # ╔═╡ 62303755-9e9a-498c-b3ba-e94352c61132
 
 
@@ -158,7 +166,7 @@ end
 [result2(pd) for pd ∈ PDE_part2]
 
 # ╔═╡ b5d4cd00-4d5b-4ab5-8771-23e471badb57
-[result2(pd) for pd ∈ PDS]
+[result2(pd) for pd ∈ PDS_part2]
 
 # ╔═╡ 4bfdda8b-8889-4fb2-bb8a-c7c343ef615c
 
@@ -220,10 +228,10 @@ html"""
 # ╟─d2638404-b96d-4362-850f-98fd5dabd5be
 # ╠═da7e182a-6c9d-4c43-91d4-b32be2545718
 # ╠═afe15c3c-0a5f-4db4-8f72-bd22b0b7e27b
-# ╠═e9fc4134-09f9-43b8-8066-24ab50a2f64c
 # ╠═d97c6185-39c1-4d26-b2d2-66dd000c317b
 # ╟─5436ac6a-5869-4b8d-9b9e-56e731589cbd
 # ╠═5d1c1e18-1eb6-4eb0-a23f-df5ef1ca94d4
+# ╠═e9fc4134-09f9-43b8-8066-24ab50a2f64c
 # ╠═057c0011-8462-4d8e-b7fa-56e572a7ec97
 # ╠═4c4f78ee-b679-4597-9a0e-a01a2060f231
 # ╠═e447f9f1-ce26-4628-804d-47e7ef146db6
@@ -233,6 +241,7 @@ html"""
 # ╠═0afa794b-17ef-4e24-a5de-caf2d4ff966e
 # ╟─2bbaf7d3-5a27-43f6-b7e6-a737a4419406
 # ╠═5a3acb14-4eb8-4462-ba2d-97b9f9ccc369
+# ╠═d9048bfa-f5b4-4257-b678-23755c97427e
 # ╠═62303755-9e9a-498c-b3ba-e94352c61132
 # ╠═e6938500-494f-4c3a-92e0-ba48fa360ec0
 # ╠═75bfb49b-dffe-4ed9-81ac-51d960915418

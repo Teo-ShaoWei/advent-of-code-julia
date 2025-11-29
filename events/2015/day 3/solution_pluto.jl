@@ -85,14 +85,6 @@ macro pd_str(s::String)
     end
 end
 
-# ╔═╡ e9fc4134-09f9-43b8-8066-24ab50a2f64c
-# puzzle data samples
-PDS = [
-	# parse_puzzle_file("sample1.txt"),
-	# parse_puzzle_file("sample2.txt"),
-	# parse_puzzle_file("sample3.txt"),
-]
-
 # ╔═╡ d97c6185-39c1-4d26-b2d2-66dd000c317b
 PDI = parse_puzzle_file("input.txt")
 
@@ -249,7 +241,6 @@ html"""
 # ╟─d2638404-b96d-4362-850f-98fd5dabd5be
 # ╠═da7e182a-6c9d-4c43-91d4-b32be2545718
 # ╠═afe15c3c-0a5f-4db4-8f72-bd22b0b7e27b
-# ╠═e9fc4134-09f9-43b8-8066-24ab50a2f64c
 # ╠═d97c6185-39c1-4d26-b2d2-66dd000c317b
 # ╟─5436ac6a-5869-4b8d-9b9e-56e731589cbd
 # ╠═5d1c1e18-1eb6-4eb0-a23f-df5ef1ca94d4
