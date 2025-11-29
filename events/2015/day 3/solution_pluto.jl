@@ -126,7 +126,7 @@ function split_role(directions::Vector{Symbol})
 end
 
 # ╔═╡ 01b765a3-5f27-445f-92e7-42a3af9e5867
-[split_role(pd) for pd ∈ PDE_part2]
+split_role.(PDE_part2)
 
 # ╔═╡ d496419e-572a-4fe7-9468-bd4d0be9e0c7
 md"""
@@ -170,7 +170,7 @@ function get_travelled(v::Vector{Symbol})
 end
 
 # ╔═╡ 99230a74-0ff6-42dc-ae26-af2478bd8fb4
-[get_travelled(pd) for pd ∈ PDE_part1]
+get_travelled.(PDE_part1)
 
 # ╔═╡ 4c4f78ee-b679-4597-9a0e-a01a2060f231
 function result1(pd)
@@ -181,7 +181,7 @@ function result1(pd)
 end
 
 # ╔═╡ e447f9f1-ce26-4628-804d-47e7ef146db6
-[result1(pd) for pd ∈ PDE_part1]
+result1.(PDE_part1)
 
 # ╔═╡ 0afa794b-17ef-4e24-a5de-caf2d4ff966e
 @time @info(
@@ -200,7 +200,7 @@ function result2(pd)
 end
 
 # ╔═╡ 75bfb49b-dffe-4ed9-81ac-51d960915418
-[result2(pd) for pd ∈ PDE_part2]
+result2.(PDE_part2)
 
 # ╔═╡ 6cb8a5e4-d822-425e-ad9e-aeff375ad9ac
 @time @info(

@@ -117,7 +117,7 @@ function result1(pd)
 end
 
 # ╔═╡ e447f9f1-ce26-4628-804d-47e7ef146db6
-[result1(pd) for pd ∈ PDE_part1]
+result1.(PDE_part1)
 
 # ╔═╡ 451ff7c6-1e2f-4717-9c15-92760473609c
 md"""

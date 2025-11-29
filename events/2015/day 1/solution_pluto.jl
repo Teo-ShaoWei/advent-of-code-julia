@@ -124,7 +124,7 @@ function result1(pd)
 end
 
 # ╔═╡ ce27c0b9-5fa2-4ce8-bd21-0b7449fefb25
-[result1(pd) for pd ∈ PDE_part1]
+result1.(PDE_part1)
 
 # ╔═╡ 451ff7c6-1e2f-4717-9c15-92760473609c
 md"""
@@ -160,7 +160,7 @@ function result2(pd)
 end
 
 # ╔═╡ 87d0b854-5e8d-4aa7-b3a6-6e241de1c96f
-[result2(pd) for pd ∈ PDE_part2]
+result2.(PDE_part2)
 
 # ╔═╡ d496419e-572a-4fe7-9468-bd4d0be9e0c7
 md"""

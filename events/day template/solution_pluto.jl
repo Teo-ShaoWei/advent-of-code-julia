@@ -115,10 +115,10 @@ function result1(pd)
 end
 
 # ╔═╡ e447f9f1-ce26-4628-804d-47e7ef146db6
-[result1(pd) for pd ∈ PDE_part1]
+result1.(PDE_part1)
 
 # ╔═╡ 5bdfe21f-9535-47f3-b162-5c63e49022ac
-[result1(pd) for pd ∈ PDS_part1]
+result1.(PDS_part1)
 
 # ╔═╡ 849a1124-c243-4011-9ae7-1e71c0b5884f
 
@@ -163,10 +163,10 @@ function result2(pd)
 end
 
 # ╔═╡ 75bfb49b-dffe-4ed9-81ac-51d960915418
-[result2(pd) for pd ∈ PDE_part2]
+result2.(PDE_part2)
 
 # ╔═╡ b5d4cd00-4d5b-4ab5-8771-23e471badb57
-[result2(pd) for pd ∈ PDS_part2]
+result2.(PDS_part2)
 
 # ╔═╡ 4bfdda8b-8889-4fb2-bb8a-c7c343ef615c
 
