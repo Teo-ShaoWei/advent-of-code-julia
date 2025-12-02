@@ -52,9 +52,12 @@ md"""
 # ╔═╡ afe15c3c-0a5f-4db4-8f72-bd22b0b7e27b
 function parse_puzzle_line(s)
     @chain s begin
-        match(r"(?<dir>.)(?<mag>\d+)", _)
+        match(r"(.)(\d+)", _)
+		(;
+			dir = Symbol(_[1]),
+		 	mag = parse(Int, _[2]),
+		)
 		NamedTuple
-		(; dir = Symbol(_[1]), mag = parse(Int, _[2]))
     end
 end
 
