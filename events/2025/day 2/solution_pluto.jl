@@ -145,11 +145,6 @@ is_invalid.([
 	1212,
 ])
 
-# ╔═╡ 90157595-b589-4c05-97a1-82ea7eaa4b19
-function sum_invalid(r::UnitRange{Int})
-	sum(x for x ∈ r if is_invalid(x))
-end
-
 # ╔═╡ 4c4f78ee-b679-4597-9a0e-a01a2060f231
 function result1(pd)
 	sum(x for r ∈ pd for x ∈ r if is_invalid(x))
@@ -278,7 +273,6 @@ html"""
 # ╠═e8f706b5-5e71-478f-839e-c25847c95372
 # ╠═3e22e22d-e22a-4323-90c7-0da2b254590b
 # ╠═87cc5e27-5bd9-4283-b305-44d340c98a94
-# ╠═90157595-b589-4c05-97a1-82ea7eaa4b19
 # ╠═4c4f78ee-b679-4597-9a0e-a01a2060f231
 # ╠═5bdfe21f-9535-47f3-b162-5c63e49022ac
 # ╟─451ff7c6-1e2f-4717-9c15-92760473609c

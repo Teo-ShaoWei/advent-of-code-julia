@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Teo ShaoWei"]
 
 [deps]
+Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
 Chain = "8be319e6-bccf-4806-a6f7-6fae938471bc"
 CircularList = "e1d4a2be-69cc-597c-a2ea-cc5d6f241fff"
@@ -19,3 +20,6 @@ Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 TerminalLoggers = "5d786b92-1e48-4d6f-9151-6b4477ca9bed"
 UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
+
+[compat]
+Accessors = "0.1.42"
