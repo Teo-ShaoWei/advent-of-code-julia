@@ -102,6 +102,33 @@ md"""
 ### answer
 """
 
+# ╔═╡ 15086b83-76c4-4082-8f23-efd9602cccdd
+md"""
+## Part 2 (alt)
+"""
+
+# ╔═╡ 4d1f931b-5dbf-4f2f-a165-d87e626c6bf7
+md"""
+Alternatively compress the area first while keeping the shape. Then floodfill and process on it. This handles a broader problem domain.
+"""
+
+# ╔═╡ c3a02d09-8661-41bd-b3ab-6e340c1c8b5d
+function make_compress_map(xs::Vector{Int})
+	sorted_xs = @chain xs begin
+		Set
+		collect
+		sort
+	end
+
+	m = Dict(sorted_xs[1] => 2)
+	for i in 2:length(sorted_xs)
+		x = sorted_xs[i]
+		prev_x = sorted_xs[i - 1]
+		m[x] = m[prev_x] + (x - prev_x > 1 ? 2 : 1)
+	end
+	return m
+end
+
 # ╔═╡ c366ad51-46da-47b4-af45-2d2374521857
 	md"""
 	## Standard helpers
@@ -216,6 +243,106 @@ result2(PDS_part2)
 )
 # my ans: 1624057680
 
+# ╔═╡ 2b058347-13d1-49ea-a74a-66e3474dcb35
+function map_ci(ci::CI{2}, compression_mapping::Vector{Dict{Int, Int}})
+	return CI(
+		compression_mapping[1][ci[1]],
+		compression_mapping[2][ci[2]],
+	)
+end
+
+# ╔═╡ deac70da-cc6c-46b2-8383-4c06ef5a4212
+function compress_cis(cis::Vector{CI{2}})
+	compress_mapping = [
+		make_compress_map([ci[1] for ci ∈ cis]),
+	    make_compress_map([ci[2] for ci ∈ cis]),
+	]
+	return [map_ci(ci, compress_mapping) for ci ∈ cis]
+end
+
+# ╔═╡ ea47396d-b6f4-46e3-ad65-670ca315d7d5
+is_within_area(ci::CI, area) = all(Tuple(ci) .∈ axes(area))
+
+# ╔═╡ 21378a48-051f-4fdb-a6f9-34b57adfdcdc
+function get_neighbours(ci::CI, area)
+    # 2D plus
+    offsets = [
+        CI(-1,  0),
+        CI( 1,  0),
+        CI( 0, -1),
+        CI( 0,  1),
+    ]
+    neighbours = Ref(ci) .+ offsets
+    return filter(nci -> is_within_area(nci, area), neighbours)
+end
+
+# ╔═╡ f43ba201-0bd3-400d-b2be-0877dcd92cdb
+function flood_exterior!(area)
+	pq = DataStructures.Queue{CI{2}}()
+	push!(pq, CI(1, 1))
+	area[CI(1, 1)] = 0
+	while !isempty(pq)
+		ci = popfirst!(pq)
+		for nci ∈ get_neighbours(ci, area)
+			if area[nci] == 2
+				area[nci] = 0
+				push!(pq, nci)
+			end
+		end
+	end
+	return area
+end
+
+# ╔═╡ cc72da4f-2bb4-4027-b6d2-5e9d8ec21962
+function make_shape(cis::Vector{CI{2}})
+	area = [2 for _ ∈ falses(make_smallest_boundary(cis; margin = (1, 1)))]
+	lines = @chain begin
+		zip(circshift(cis, 1), cis)
+		@. collect
+		@. make_smallest_boundary
+		@. CIS
+	end
+	for line in lines
+		area[line] .= 1
+	end
+	return flood_exterior!(area)
+end
+
+# ╔═╡ 99a1f3c3-9de2-4210-a7c8-590df01f960d
+is_valid_pair(pair, shape) = all(shape[make_smallest_boundary(pair)...] .> 0)
+
+# ╔═╡ 5d8fcc7d-dc07-4566-9a09-4b78c31219b4
+function result2_alt(pd)
+	cis = pd
+	mapped_cis = compress_cis(cis)
+	shape = make_shape(mapped_cis)
+
+	pairs = collect(Combinatorics.combinations(cis, 2))
+	compressed_pairs = collect(Combinatorics.combinations(mapped_cis, 2))
+	valid_pairs = [
+		pair
+		for (pair, compressed_pair) ∈ zip(pairs, compressed_pairs)
+		if is_valid_pair(compressed_pair, shape)
+	]
+	
+	@chain valid_pairs begin
+		@. make_smallest_boundary
+		@. get_rect_size
+		maximum
+	end
+end
+
+# ╔═╡ 128909ad-3563-4658-bf2c-bd7a152572ed
+result2_alt(PDS_part2)
+# 24
+
+# ╔═╡ 3a70db88-c450-429b-8bab-832903b07626
+@time @info(
+    "part 2 (alt) answer",
+    result2_alt(PDI),
+)
+# my ans: 1624057680
+
 # ╔═╡ b405167e-613f-49ae-ad3d-30354d2c30a3
 begin
 	Base.show(io::IO, ::MIME"text/plain", c::CI) = print(io, "CI(", join(string.(Tuple(c)), ", "), ")")
@@ -267,6 +394,19 @@ html"""
 # ╠═b5d4cd00-4d5b-4ab5-8771-23e471badb57
 # ╟─d496419e-572a-4fe7-9468-bd4d0be9e0c7
 # ╠═6cb8a5e4-d822-425e-ad9e-aeff375ad9ac
+# ╠═15086b83-76c4-4082-8f23-efd9602cccdd
+# ╠═4d1f931b-5dbf-4f2f-a165-d87e626c6bf7
+# ╠═c3a02d09-8661-41bd-b3ab-6e340c1c8b5d
+# ╠═deac70da-cc6c-46b2-8383-4c06ef5a4212
+# ╠═2b058347-13d1-49ea-a74a-66e3474dcb35
+# ╠═ea47396d-b6f4-46e3-ad65-670ca315d7d5
+# ╠═21378a48-051f-4fdb-a6f9-34b57adfdcdc
+# ╠═f43ba201-0bd3-400d-b2be-0877dcd92cdb
+# ╠═cc72da4f-2bb4-4027-b6d2-5e9d8ec21962
+# ╠═99a1f3c3-9de2-4210-a7c8-590df01f960d
+# ╠═5d8fcc7d-dc07-4566-9a09-4b78c31219b4
+# ╠═128909ad-3563-4658-bf2c-bd7a152572ed
+# ╠═3a70db88-c450-429b-8bab-832903b07626
 # ╟─c366ad51-46da-47b4-af45-2d2374521857
 # ╠═090b4c81-9cda-42e4-a9ff-22fbf5844fa0
 # ╠═90815a37-6e8e-4c01-9e22-52dd96ab457b
